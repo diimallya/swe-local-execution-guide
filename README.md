@@ -1,16 +1,17 @@
-For running SWE locally:
+# SWE execution in local environment:
 
-These steps demonstrate the steps to test the developed IBM SWE gitops module locally by pointing to any OpenShift cluster and desired GitHub repository.
+This documentation demonstrates the steps to test the developed IBM SWE gitops module locally by pointing to desired OpenShift cluster and GitHub repository.
 
 ## Setup
 
-Clone your module repo. Go to `test/stages` directory:
+Clone your module repository. Go to `test/stages` directory:
 
-1. Make sure github.com/cloud-native-toolkit/terraform-tools-argocd-bootstrap.git module is being used for gitops-bootstrap purpose. 
-   Note: In the forked template code `github.com/cloud-native-toolkit/terraform-util-gitops-bootstrap` is used as they are using existing ArgoCD setup and not installing ArgoCD for every execution. Please don't commit this change back to repo. This change will be helpful to test our developed module in our own target cluster.
+1. Use `github.com/cloud-native-toolkit/terraform-tools-argocd-bootstrap.git` module for gitops-bootstrap purpose. 
+   
+**Note**: In the forked template code `github.com/cloud-native-toolkit/terraform-util-gitops-bootstrap` is used as they are using existing ArgoCD setup and not installing ArgoCD for every execution. This change will be helpful to automate ArgoCD installation in our target cluster and to test our developed module. **Please don't commit this change back to repo**.
 
    Ex: Change `stage1-gitops-bootstrap.tf` file content to
-   `
+   ```
    module "gitops-bootstrap" {
     source = "github.com/cloud-native-toolkit/terraform-tools-argocd-bootstrap.git" 
     cluster_type = module.dev_cluster.platform.type_code
@@ -27,22 +28,24 @@ Clone your module repo. Go to `test/stages` directory:
     bootstrap_prefix = var.bootstrap_prefix
     create_webhook = true
   }
- `
+ ```
 
-2. Add the olm module (github.com/cloud-native-toolkit/terraform-k8s-olm) as stage-1-olm.tf the  terraform-tools-argocd-bootstrap module needs it.
+2. Add the olm module (`github.com/cloud-native-toolkit/terraform-k8s-olm`) as `stage-1-olm.tf` the  `terraform-tools-argocd-bootstrap` module needs it.
  
- Add `stage1-olm.tf` with following content:
- `module "olm" {
+ Add `stage1-olm.tf` file with following content:
+ ```
+ module "olm" {
     source = "github.com/cloud-native-toolkit/terraform-k8s-olm" 
     cluster_config_file = module.dev_cluster.config_file_path
     cluster_type = module.dev_cluster.platform.type_code
     cluster_version = module.dev_cluster.platform.version
   }
- `
+ ```
 
-3. Refer all the variables being passed to all modules in all stage-1-*.tf files and also stage-2-*.tf files. These variables are defined in varaibles.tf file in that directory. If there is no default values initialized for any varaible in varaibles.tf file, or if you want to override the default values mentioned in variables.tf file, create a terraform.tfvars file and intialize all requried variables. 
+3. Refer all the variables being passed to all modules in all `stage-1-*.tf` files and also `stage-2-*.tf` files. Many variables are intialized with other module's reference variables. Some would need direct inputs. These variables which need input are defined in `varaibles.tf` file in that directory. If there is no default values initialized for a varaible in varaibles.tf file, or if you want to override the default values mentioned in `variables.tf` file, create a terraform.tfvars file and intialize all requried variables. 
+
  Create `terraform.tfvars` file in test/stages directory. An example file will have following variables. Initialize with appropriate values required for your module setup.
- `
+```
 ibmcloud_api_key=""
 server_url=""
 namespace=""
@@ -52,18 +55,30 @@ git_repo=""
 git_username=""
 git_token=""
 cp_entitlement_key=""
-`
+```
 
-In terraform.tfvars file make sure to give all details pertaining to your CLUSTER, GIT Repo and IBM Cloud API key.
+In `terraform.tfvars` file make sure to give all details pertaining to YOUR cluster, git repository and IBM Cloud API key of the target cloud account.
 
-4. Create a symbolic link to current module code execution (stage2-mymodule.tf) by running following command in command prompt in test/stages directory:
+4. In `stage1-cluster.tf` file you may initialize `login_token` value directly or initialize it with `var.login_token` and define `login_token` variable in variable.tf and then initialize it in `terraform.tfvars` 
+```
+module "dev_cluster" {
+  source = "github.com/cloud-native-toolkit/terraform-ocp-login.git"
+
+  server_url = var.server_url
+  login_user = "apikey"
+  login_password = var.ibmcloud_api_key
+  login_token = var.login_token # added login_token in variable.tf and initialized in terraform.tfvars file.
+}
+```
+
+5. Create a symbolic link to current module code execution (stage2-mymodule.tf) by running following command in command prompt in test/stages directory:
 `ln -s ../.. module`
 
-5. If this is second time execution, remove .terraform .tmp .tmpgitops etc directories and terraform.tfstate terraform.tfstate.backup files. 
+6. If this is second time execution, remove `.terraform` `.tmp` `.tmpgitops` etc directories and `terraform.tfstate` `terraform.tfstate.backup` files. 
 
-Note: By default the github repo mentioned (git_repo variable in terraform.tfvars) will be created hence should not exist. Only github org should exist.
+**Note**: By default the github repo mentioned (`git_repo` variable in `terraform.tfvars`) will be created hence should not exist. Only github org should exist.
 
-Now we are set to execute:
+Now we are set to execute!!
 
 ## Execution Steps: 
 
@@ -83,9 +98,9 @@ If we get the output with list of resources to be added, we can run next command
 
 This command will provision resources in mentioned cluster.
 
-The mentioend git repo will be populated with all requried argocd and payload yamls and in OpenShift cluster we can verfiy openshift-giops, sealed-secrets, openshift-piplines etc namespaces getting created and then requried operators getting installed. 
+The mentioned git repoository will be populated with all requried argocd config yamls and payload yamls and in OpenShift cluster we can verfiy openshift-giops, sealed-secrets, openshift-piplines etc namespaces getting created and then requried operators getting installed. 
 
-Details like argocd password can be found test/stages/.tmp/argocd-password.val etc.
+Details like argocd password can be found in file `test/stages/.tmp/argocd-password.val` etc.
 
 ## Cleaning
 
@@ -118,3 +133,7 @@ Ex:
  Then run `which mq` to find the instalaltion location.
  Then copy the yq executable inside bin2 dir of test/stages. `cp /usr/local/bin/yq bin2/`
  Execute `./bin2/yq4` and verify that it is allowed to execute, change system preferences if required.
+ 
+ ## Authors: 
+ - Gowdhaman Jayaseelan (gjayasee@in.ibm.com)
+ - Divya Kamath (dimallya@in.ibm.com
