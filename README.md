@@ -133,9 +133,9 @@ Ex:
 
  Install yq in your system by running `brew install yq`
  Then run `which mq` to find the instalaltion location.
- Then copy the yq executable inside bin2 dir of test/stages. `cp /usr/local/bin/yq bin2/`
+ Copy the yq executable inside bin2 dir of `test/stages`. `cp /usr/local/bin/yq bin2/`
  Execute `./bin2/yq4` and verify that it is allowed to execute, change system preferences if required.
  
  ## Authors: 
  - Gowdhaman Jayaseelan (gjayasee@in.ibm.com)
- - Divya Kamath (dimallya@in.ibm.com
+ - Divya Kamath (dimallya@in.ibm.com)
