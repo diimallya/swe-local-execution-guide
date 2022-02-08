@@ -72,7 +72,9 @@ module "dev_cluster" {
 ```
 
 5. Create a symbolic link to current module code execution (stage2-mymodule.tf) by running following command in command prompt in test/stages directory:
-`ln -s ../.. module`
+```
+ln -s ../.. module
+```
 
 6. If this is second time execution, remove `.terraform` `.tmp` `.tmpgitops` etc directories and `terraform.tfstate` `terraform.tfstate.backup` files. 
 
@@ -115,11 +117,11 @@ This will remove all the ArgoCD deployments and github repo created by the autom
 3. Go to Administration -> CRDs -> namespacescopes -> Instances Tab -> Click on each item and in yaml remove the entry under finalizers
 
 Ex:
-
+```
   finalizers:
     - finalizer.nss.operator.ibm.com 
-
- In the above ex remove line `- finalizer.nss.operator.ibm.com`
+```
+ In the above example remove line `- finalizer.nss.operator.ibm.com`
 
  4. Make sure namespaces get deleted and not in "Terminating" state anymore. If it continues to be in "Terminating" state, examine namespace yaml and check the finalizer holiding that.
 
