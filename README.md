@@ -102,7 +102,7 @@ The mentioned git repoository will be populated with all requried argocd config 
 
 Details like argocd password can be found in file `test/stages/.tmp/argocd-password.val` etc.
 
-## Cleaning
+## Destroy 
 
 `terraform destroy` 
 
@@ -127,7 +127,7 @@ Ex:
 
  If facing following error 
 
- yq4 is not an executable binary
+ `yq4 is not an executable binary`
 
  Install yq in your system by running `brew install yq`
  Then run `which mq` to find the instalaltion location.
