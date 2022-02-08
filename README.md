@@ -106,7 +106,7 @@ Details like argocd password can be found in file `test/stages/.tmp/argocd-passw
 
 `terraform destroy` 
 
-This will remove all the ArgoCD deployments and github repo created by the automation. To make OpenShift cluster reusable, further cleaning can be done using following steps in OpenShift console:
+This will remove all the ArgoCD deployments and github repo created by the automation. After `terraform destroy` is completed, to make OpenShift cluster reusable, further cleaning can be done using following steps in OpenShift console:
 
 1. Delete the namespaces created by script.
 
