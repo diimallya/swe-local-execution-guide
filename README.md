@@ -1,4 +1,4 @@
-# SWE execution in local environment:
+# SWE execution in local environment
 
 This documentation demonstrates the steps to test the developed IBM SWE gitops module locally by pointing to desired OpenShift cluster and GitHub repository.
 
