@@ -127,14 +127,25 @@ Ex:
 
 ## Troubleshooting
 
- If facing following error 
+1. Error `yq4 is not an executable binary` while doing terraform apply.
+ Steps to resovle:
+    - Install yq in your system by running.
+    `brew install yq`
+    -  Find the instalaltion location.
+    `which yq`
+    - Copy the yq executable inside bin2 dir of `test/stages`. 
+    `cp /usr/local/bin/yq ./bin2/`
+    - Execute `./bin2/yq4` and verify that it is allowed to execute, change system preferences if required.
 
- `yq4 is not an executable binary`
+2. The secret is not get created in OpenShift cluster due to `kubeseal` execution error.
 
- Install yq in your system by running `brew install yq`
- Then run `which mq` to find the instalaltion location.
- Copy the yq executable inside bin2 dir of `test/stages`. `cp /usr/local/bin/yq bin2/`
- Execute `./bin2/yq4` and verify that it is allowed to execute, change system preferences if required.
+   **Note:** This error doesn't stop the execution during terraform apply, however error gets logged and the execution continues, but secret doesn't get created.
+
+   Steps to resolve:
+    - Download the kubeseal executable compatible with your OS
+   Link to download kubeseal for MAC: https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.17.3/kubeseal-0.17.3-darwin-amd64.tar.gz
+    - Extract and copy the kubeseal executable in `test/stages/bin` directory in your module folder.
+    `cp kubeseal ./bin/`
  
  ## Authors: 
  - Gowdhaman Jayaseelan (gjayasee@in.ibm.com)
