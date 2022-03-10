@@ -143,7 +143,7 @@ Ex:
     
     - Execute `./bin2/yq4` and verify that it is allowed to execute, change system preferences if required. If the binary launch is giving expected output then it can be considered to be ready for execution during `terraform apply`
     ```
-    bin2$./yq4
+    stages$ ./bin2/yq4
       Usage:
         yq [flags]
         yq [command]
