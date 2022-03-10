@@ -30,7 +30,7 @@ Clone your module repository. Go to `test/stages` directory:
   }
  ```
 
-2. Add the olm module (`github.com/cloud-native-toolkit/terraform-k8s-olm`) as `stage-1-olm.tf` the  `terraform-tools-argocd-bootstrap` module needs it.
+2. Add the olm module (`github.com/cloud-native-toolkit/terraform-k8s-olm`) in `stage-1-olm.tf`, as the `terraform-tools-argocd-bootstrap` module (added in previous step) needs it.
  
  Add `stage1-olm.tf` file with following content:
  ```
@@ -42,32 +42,33 @@ Clone your module repository. Go to `test/stages` directory:
   }
  ```
 
-3. Refer all the variables being passed to all modules in all `stage-1-*.tf` files and also `stage-2-*.tf` files. Many variables are intialized with other module's reference variables. Some would need direct inputs. These variables which need input are defined in `varaibles.tf` file in that directory. If there is no default values initialized for a varaible in varaibles.tf file, or if you want to override the default values mentioned in `variables.tf` file, create a terraform.tfvars file and intialize all requried variables. 
+3. Refer all the variables being passed to all modules in all `stage-1-*.tf` files and also `stage-2-*.tf` files. Many variables are intialized with other module's reference variables. Some would need direct inputs. These variables which need input are defined in `varaibles.tf` file in the `test/stages` directory. If there is no default values initialized for a varaible in `varaibles.tf` file, or if you want to override the default values mentioned in `variables.tf` file, create a `terraform.tfvars` file in `test/stages` directory and intialize all requried variables. 
 
- Create `terraform.tfvars` file in test/stages directory. An example file will have following variables. Initialize with appropriate values required for your module setup.
+ Create `terraform.tfvars` file in test/stages directory. An example file will have following variables. Initialize with appropriate values required for your modules in `stage-1-*.tf` and also `stage-2-*.tf` files.
 ```
-ibmcloud_api_key=""
-server_url=""
-namespace=""
-login_token=""
-git_org=""
-git_repo=""
-git_username=""
-git_token=""
-cp_entitlement_key=""
+cluster_username="apikey" # default username for any OCP cluster
+cluster_password="xxxxx"  ## IBM Cloud account API Key
+server_url="https://xxxxxxx:xxxxxxx" ## OCP cluster URL
+namespace="" # namespace name
+cluster_type = "openshift"
+git_org="" # github org name of your account
+git_repo="gitops-test-repo" # github repo name which is not existing 
+git_username="xxxxxx" # github user name
+git_token="xxx_xxxxxx" # Personal Access Token for our github repo.
+cp_entitlement_key="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # Entitlement key value
 ```
 
 In `terraform.tfvars` file make sure to give all details pertaining to YOUR cluster, git repository and IBM Cloud API key of the target cloud account.
 
-4. In `stage1-cluster.tf` file you may initialize `login_token` value directly or initialize it with `var.login_token` and define `login_token` variable in variable.tf and then initialize it in `terraform.tfvars` 
+4. In `stage1-cluster.tf` file you can initialize `login_token` value directly. This is the login token for target OCP cluster, obtained from `oc login` command.
 ```
 module "dev_cluster" {
   source = "github.com/cloud-native-toolkit/terraform-ocp-login.git"
 
   server_url = var.server_url
-  login_user = "apikey"
-  login_password = var.ibmcloud_api_key
-  login_token = var.login_token # added login_token in variable.tf and initialized in terraform.tfvars file.
+  login_user = var.cluster_username
+  login_password = var.cluster_password
+  login_token = "xxxxxxxxxxx" # OCP cluster login token obtained from `oc login` command
 }
 ```
 
