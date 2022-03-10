@@ -44,21 +44,21 @@ Clone your module repository. Go to `test/stages` directory:
 
 3. Refer all the variables being passed to all modules in all `stage-1-*.tf` files and also `stage-2-*.tf` files. Many variables are intialized with other module's reference variables. Some would need direct inputs. These variables which need input are defined in `varaibles.tf` file in the `test/stages` directory. If there is no default values initialized for a varaible in `varaibles.tf` file, or if you want to override the default values mentioned in `variables.tf` file, create a `terraform.tfvars` file in `test/stages` directory and intialize all requried variables. 
 
- Create `terraform.tfvars` file in test/stages directory. An example file will have following variables. Initialize with appropriate values required for your modules in `stage-1-*.tf` and also `stage-2-*.tf` files.
+ Create `terraform.tfvars` file in `test/stages` directory. An example file will have following variables. Initialize with appropriate values required for all modules in `stage-1-*.tf` and also your module present in `stage-2-*.tf` file.
 ```
-cluster_username="apikey" # default username for any OCP cluster
-cluster_password="xxxxx"  ## IBM Cloud account API Key
-server_url="https://xxxxxxx:xxxxxxx" ## OCP cluster URL
-namespace="" # namespace name
-cluster_type = "openshift"
-git_org="" # github org name of your account
-git_repo="gitops-test-repo" # github repo name which is not existing 
-git_username="xxxxxx" # github user name
-git_token="xxx_xxxxxx" # Personal Access Token for our github repo.
-cp_entitlement_key="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # Entitlement key value
+cluster_username="apikey"                 # default username for any OCP cluster
+cluster_password="xxxxx"                  # IBM Cloud account API Key
+server_url="https://xxxxxxx:xxxxxxx"      # OCP cluster URL
+namespace="xxxxx"                         # name of namespace to be created for your module
+cluster_type = "openshift"                # for OCP cluster value is "openshift"
+git_org="testorg"                         # github org name of your account
+git_repo="gitops-test-repo"               # github repo name which is not existing 
+git_username="xxxxxx"                     # github user name
+git_token="xxx_xxxxxx"                    # Personal Access Token for our github repo.
+cp_entitlement_key="xxxxxxxxxxxxxxxxxx"   # Entitlement key value
 ```
 
-In `terraform.tfvars` file make sure to give all details pertaining to YOUR cluster, git repository and IBM Cloud API key of the target cloud account.
+While initializing `terraform.tfvars` file make sure to give all details pertaining to YOUR cluster, git repository and IBM Cloud API key of the cloud account, where target cluster is available.
 
 4. In `stage1-cluster.tf` file you can initialize `login_token` value directly. This is the login token for target OCP cluster, obtained from `oc login` command.
 ```
@@ -68,7 +68,7 @@ module "dev_cluster" {
   server_url = var.server_url
   login_user = var.cluster_username
   login_password = var.cluster_password
-  login_token = "xxxxxxxxxxx" # OCP cluster login token obtained from `oc login` command
+  login_token = "xxxxxxxxxxx" # OCP cluster login token obtained from "oc login" command
 }
 ```
 
@@ -131,24 +131,41 @@ Ex:
 1. Error `yq4 is not an executable binary` while doing terraform apply.
 
    Steps to resovle:
-    - Install yq in your system by running.
-    `brew install yq`
-    -  Find the instalaltion location.
-    `which yq`
-    - Copy the yq executable inside bin2 dir of `test/stages`. 
-    `cp /usr/local/bin/yq ./bin2/`
-    - Execute `./bin2/yq4` and verify that it is allowed to execute, change system preferences if required.
+    - Install yq in your system by running following commnad:
+   
+      `brew install yq`
+    -  Find the instalaltion location of `yq` using following command:
+    
+       `which yq`
+    - Copy the yq executable inside bin2 dir of `test/stages`.
+     
+      `cp /usr/local/bin/yq ./bin2/`
+    
+    - Execute `./bin2/yq4` and verify that it is allowed to execute, change system preferences if required. If the binary launch is giving expected output then it can be considered to be ready for execution during `terraform apply`
+    ```
+    bin2$./yq4
+      Usage:
+        yq [flags]
+        yq [command]
+      ....
+     ```
+
 
 2. The secret is not get created in OpenShift cluster due to `kubeseal` execution error.
 
    **Note:** This error doesn't stop the execution during terraform apply, however error gets logged and the execution continues, but secret doesn't get created.
    
    Steps to resolve:
-    - Download the kubeseal executable compatible with your OS
+   
+    - Download the kubeseal executable compatible with your OS.
+    
    Link to download kubeseal for MAC: https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.17.3/kubeseal-0.17.3-darwin-amd64.tar.gz
-    - Extract and copy the kubeseal executable in `test/stages/bin` directory in your module folder.
+   
+   - Extract and copy the kubeseal executable in `test/stages/bin` directory in your module folder.
     
       `cp kubeseal ./bin/`
+      
+   - Execute `./bin/kubeseal` and verify that it is allowed to execute, change system preferences if required.
  
  ## Authors: 
  - Gowdhaman Jayaseelan (gjayasee@in.ibm.com)
