@@ -166,6 +166,7 @@ Ex:
       `cp kubeseal ./bin/`
       
    - Execute `./bin/kubeseal` and verify that it is allowed to execute, change system preferences if required.
+   - Also place kubeseal executable in `/usr/local/bin/` directory.
  
  ## Authors: 
  - Gowdhaman Jayaseelan (gjayasee@in.ibm.com)
