@@ -85,7 +85,56 @@ Now we are set to execute!!
 
 ## Execution Steps: 
 
-To be run in test/stages directory:
+You can choose to run execution from either of the following methods:
+- **ibmgaragecloud cli-tools** docker image <br/>
+**OR** <br/>
+- From your local machine.
+### Execution using cli-tools docker image ###
+
+1. Run the following command from module's root directory (Ex: `$HOME/terraform-gitops-module`) to start running docker container:
+```
+docker run -it \
+  -v ${PWD}:/terraform \
+  -w /terraform \
+  quay.io/ibmgaragecloud/cli-tools:v1.1
+```
+This will mount the present working directory inside the docker container at `/terraform` path. 
+ 
+2. Inside docker run `ls` command to make sure all contents in module root directory are visible. <br/><br/>
+   **Note**: <br/>
+  - Sometimes ${PWD} is not mounted inside docker container, you may try giving the absolute path as below.
+ ```
+docker run -it \
+  -v /Users/divyakamath/terraform-gitops-module:/terraform \
+  -w /terraform \
+quay.io/ibmgaragecloud/cli-tools:v1.1
+
+```  
+  - Sometimes due to permission issues present working directory contents are not mounted inside docker even if absolute path is given. Make sure module directory is placed in a user-created directory under $HOME rather than default directories like `$HOME/Documents` etc.
+   
+3. Navigate to `test/stages` direcotry and execute: 
+
+`sudo terraform init`
+
+This will download all required modules in .terraform directory inside test/stages. As you may encounter permission issue, to create .terraform directory, it can be executed with sudo prefix.
+
+4. `sudo terraform plan`
+
+This will make a dry-run and provides a list of resources to be added/destroyed and also any syntax/reference errors. If we get the output with list of resources to be added, we can run next command to actually create those resources.
+
+5. `sudo terraform apply --auto-approve`
+
+This command will provision resources in mentioned cluster.
+
+The mentioned git repoository will be populated with all requried argocd config yamls and payload yamls and in OpenShift cluster we can verfiy openshift-giops, sealed-secrets, openshift-piplines etc namespaces getting created and then requried operators getting installed. 
+
+Details like argocd password can be found in file `test/stages/.tmp/argocd-password.val` etc.
+
+### Execution locally on your system ###
+
+Please follow steps provided in [Troubleshooting scetion](https://github.com/diimallya/swe-local-execution-guide#troubleshooting) to download required executables compatible with your OS before proceeding with next steps. 
+
+To be run in `test/stages` directory:
 
 1. `terraform init`
 
@@ -139,7 +188,7 @@ Ex:
        `which yq`
     - Copy the yq executable inside bin2 dir of `test/stages`.
      
-      `cp /usr/local/bin/yq ./bin2/`
+      `cp /usr/local/bin/yq ./bin2/yq4`
     
     - Execute `./bin2/yq4` and verify that it is allowed to execute, change system preferences if required. If the binary launch is giving expected output then it can be considered to be ready for execution during `terraform apply`
     ```
