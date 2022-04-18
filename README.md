@@ -86,9 +86,9 @@ Now we are set to execute!!
 ## Execution Steps: 
 
 You can choose to run execution from either of the following methods:
-- **ibmgaragecloud cli-tools** docker image <br/>
+- Execution using **cli-tools** docker image <br/>
 **OR** <br/>
-- From your local machine.
+- Executing locally on your system.
 ### Execution using cli-tools docker image ###
 
 1. Run the following command from module's root directory (Ex: `$HOME/terraform-gitops-module`) to start running docker container:
@@ -130,7 +130,7 @@ The mentioned git repoository will be populated with all requried argocd config 
 
 Details like argocd password can be found in file `test/stages/.tmp/argocd-password.val` etc.
 
-### Execution locally on your system ###
+### Executing locally on your system ###
 
 Please follow steps provided in [Troubleshooting scetion](https://github.com/diimallya/swe-local-execution-guide#troubleshooting) to download required executables compatible with your OS before proceeding with next steps. 
 
